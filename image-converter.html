@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter | Tools Spot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #dc2626;
+            --dark-red: #b91c1c;
+            --light-red: #fee2e2;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333333;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-red);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--dark-gray);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-gray);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--primary-red);
+        }
+
+        .tool-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .tool-title h1 {
+            font-size: 2.5rem;
+            color: var(--dark-red);
+            margin-bottom: 10px;
+        }
+
+        .tool-title p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .converter-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .converter-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-section, .preview-section {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--dark-red);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--primary-red);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--light-red);
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+        }
+
+        .upload-btn {
+            background-color: var(--primary-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background-color: var(--dark-red);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .format-options {
+            margin-top: 20px;
+        }
+
+        .format-options h3 {
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+        }
+
+        .format-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .format-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .format-btn {
+            background-color: var(--light-gray);
+            border: 1px solid #ddd;
+            padding: 12px 10px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .format-btn:hover {
+            background-color: #e5e5e5;
+        }
+
+        .format-btn.active {
+            background-color: var(--primary-red);
+            color: var(--white);
+            border-color: var(--primary-red);
+        }
+
+        .preview-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: var(--light-gray);
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: #888;
+        }
+
+        .preview-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .image-info {
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn i {
+            margin-right: 8px;
+        }
+
+        .convert-btn {
+            background-color: var(--primary-red);
+            color: var(--white);
+        }
+
+        .convert-btn:hover {
+            background-color: var(--dark-red);
+        }
+
+        .download-btn {
+            background-color: var(--dark-gray);
+            color: var(--white);
+        }
+
+        .download-btn:hover {
+            background-color: #222;
+        }
+
+        .download-btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        footer {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .footer-logo span {
+            color: var(--primary-red);
+        }
+
+        .footer-about p {
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .footer-links h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 30px;
+            border-top: 1px solid #444;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: var(--primary-red);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">Tools<span>Spot</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Tools</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="tool-title">
+            <h1>Image Converter</h1>
+            <p>Convert your images to different formats quickly and easily. Supports JPG, PNG, WEBP, and more.</p>
+        </div>
+
+        <div class="converter-container">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h2 class="section-title"><i class="fas fa-upload"></i> Upload Image</h2>
+                
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your image here or click to browse</p>
+                    <button class="upload-btn">Select Image</button>
+                    <input type="file" id="file-input" accept="image/*">
+                </div>
+
+                <div class="format-options">
+                    <h3>Convert To:</h3>
+                    <div class="format-buttons">
+                        <button class="format-btn" data-format="jpg">JPG</button>
+                        <button class="format-btn" data-format="png">PNG</button>
+                        <button class="format-btn" data-format="webp">WEBP</button>
+                        <button class="format-btn" data-format="gif">GIF</button>
+                        <button class="format-btn" data-format="bmp">BMP</button>
+                        <button class="format-btn" data-format="tiff">TIFF</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convert-btn">
+                        <i class="fas fa-sync-alt"></i> Convert Image
+                    </button>
+                    <button class="action-btn download-btn" id="download-btn" disabled>
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> Preview</h2>
+                
+                <div class="preview-container">
+                    <img id="image-preview" src="#" alt="Preview">
+                    <div class="preview-placeholder">
+                        <i class="far fa-image"></i>
+                        <p>Your image will appear here</p>
+                    </div>
+                </div>
+
+                <div class="image-info">
+                    <div class="info-item">
+                        <span class="info-label">Filename:</span>
+                        <span id="file-name">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Original Format:</span>
+                        <span id="original-format">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Original Size:</span>
+                        <span id="original-size">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Target Format:</span>
+                        <span id="target-format">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-about">
+                <a href="#" class="footer-logo">Tools<span>Spot</span></a>
+                <p>Simplifying your digital life with easy-to-use online tools for all your needs.</p>
+                <p>Contact: <a href="mailto:toolsspot0@gmail.com">toolsspot0@gmail.com</a></p>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">All Tools</a></li>
+                    <li><a href="#">Image Tools</a></li>
+                    <li><a href="#">Document Tools</a></li>
+                    <li><a href="#">Calculator Tools</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Tools Spot. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const imagePreview = document.getElementById('image-preview');
+            const previewPlaceholder = document.querySelector('.preview-placeholder');
+            const formatButtons = document.querySelectorAll('.format-btn');
+            const convertBtn = document.getElementById('convert-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const fileName = document.getElementById('file-name');
+            const originalFormat = document.getElementById('original-format');
+            const originalSize = document.getElementById('original-size');
+            const targetFormat = document.getElementById('target-format');
+            const notification = document.getElementById('notification');
+            
+            // Variables
+            let selectedFile = null;
+            let selectedFormat = 'jpg';
+            let convertedImageUrl = null;
+            
+            // Event Listeners
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = 'rgba(220, 38, 38, 0.2)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.backgroundColor = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect();
+                }
+            });
+            
+            formatButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    formatButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    selectedFormat = button.getAttribute('data-format');
+                    targetFormat.textContent = selectedFormat.toUpperCase();
+                    
+                    // Reset download button if format changed
+                    if (convertedImageUrl) {
+                        downloadBtn.disabled = false;
+                    }
+                });
+            });
+            
+            convertBtn.addEventListener('click', convertImage);
+            
+            downloadBtn.addEventListener('click', downloadImage);
+            
+            // Functions
+            function handleFileSelect() {
+                if (fileInput.files && fileInput.files[0]) {
+                    selectedFile = fileInput.files[0];
+                    
+                    // Update file info
+                    fileName.textContent = selectedFile.name;
+                    originalFormat.textContent = selectedFile.name.split('.').pop().toUpperCase();
+                    originalSize.textContent = formatFileSize(selectedFile.size);
+                    
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        previewPlaceholder.style.display = 'none';
+                    };
+                    reader.readAsDataURL(selectedFile);
+                    
+                    // Enable convert button
+                    convertBtn.disabled = false;
+                    downloadBtn.disabled = true;
+                    
+                    // Reset converted image
+                    convertedImageUrl = null;
+                    
+                    showNotification('Image uploaded successfully!');
+                }
+            }
+            
+            function convertImage() {
+                if (!selectedFile) {
+                    showNotification('Please select an image first!', true);
+                    return;
+                }
+                
+                // Simulate conversion process
+                convertBtn.disabled = true;
+                convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+                
+                // In a real implementation, you would send the image to a server for conversion
+                // For this demo, we'll simulate the conversion with a timeout
+                setTimeout(() => {
+                    // Create a canvas to "convert" the image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Set canvas dimensions to match image
+                    canvas.width = imagePreview.naturalWidth;
+                    canvas.height = imagePreview.naturalHeight;
+                    
+                    // Draw image on canvas
+                    ctx.drawImage(imagePreview, 0, 0);
+                    
+                    // Get the converted image as data URL
+                    // Note: In a real implementation, this would be done server-side
+                    // to properly convert between formats
+                    convertedImageUrl = canvas.toDataURL(`image/${selectedFormat}`);
+                    
+                    // Enable download button
+                    downloadBtn.disabled = false;
+                    
+                    // Reset convert button
+                    convertBtn.disabled = false;
+                    convertBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Convert Image';
+                    
+                    showNotification(`Image converted to ${selectedFormat.toUpperCase()} successfully!`);
+                }, 1500);
+            }
+            
+            function downloadImage() {
+                if (!convertedImageUrl) {
+                    showNotification('Please convert the image first!', true);
+                    return;
+                }
+                
+                // Create a temporary link for download
+                const link = document.createElement('a');
+                link.href = convertedImageUrl;
+                link.download = `converted-image.${selectedFormat}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Image downloaded successfully!');
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function showNotification(message, isError = false) {
+                notification.textContent = message;
+                notification.style.backgroundColor = isError ? '#ef4444' : '#10b981';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Initialize with JPG as default format
+            formatButtons[0].classList.add('active');
+            targetFormat.textContent = 'JPG';
+        });
+    </script>
+</body>
+</html>
